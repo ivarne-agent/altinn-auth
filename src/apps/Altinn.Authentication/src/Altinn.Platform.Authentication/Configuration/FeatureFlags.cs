@@ -19,5 +19,11 @@
         /// Feature flag for supporting ID token exchange for self-registered email users.
         /// </summary>
         public const string SupportIDTokenExchangeForSelfRegisteredEmailUsers = "SupportIDTokenExchangeForSelfRegisteredEmailUsers";
+
+        /// <summary>
+        /// Feature flag for app tokens issued in exchange for a trusted cluster's service account token,
+        /// and the administration of trusted clusters. See ADR-0005.
+        /// </summary>
+        public const string AppTokens = "AppTokens";
     }
 }

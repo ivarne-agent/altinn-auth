@@ -285,7 +285,9 @@ internal static class AuthenticationHost
             .AddPolicy(AuthzConstants.POLICY_CLIENTDELEGATION_WRITE, policy =>
                 policy.RequireScopeAnyOf(AuthzConstants.SCOPE_CLIENTDELEGATION_WRITE))
             .AddPolicy(AuthzConstants.POLICY_SCOPE_PORTAL, policy =>
-                policy.RequireScopeAnyOf(AuthzConstants.SCOPE_PORTAL));
+                policy.RequireScopeAnyOf(AuthzConstants.SCOPE_PORTAL))
+            .AddPolicy(AuthzConstants.POLICY_SCOPE_WORKLOADIDENTITY_ADMIN, policy =>
+                policy.RequireScopeAnyOf(AuthzConstants.SCOPE_WORKLOADIDENTITY_ADMIN));
 
         services.AddFeatureManagement();
         services.AddScoped<TrimStringsActionFilter>();

@@ -27,6 +27,16 @@ namespace Altinn.Platform.Authentication.Core.Constants
         public const string SCOPE_SYSTEMREGISTER_ADMIN = "altinn:authentication/systemregister.admin";
 
         /// <summary>
+        /// Policy tag for administering the clusters trusted to exchange service account tokens for app tokens.
+        /// </summary>
+        public const string POLICY_SCOPE_WORKLOADIDENTITY_ADMIN = "ScopeWorkloadIdentityAdmin";
+
+        /// <summary>
+        /// Scope for administering the clusters trusted to exchange service account tokens for app tokens.
+        /// </summary>
+        public const string SCOPE_WORKLOADIDENTITY_ADMIN = "altinn:authentication/workloadidentity.admin";
+
+        /// <summary>
         /// Claim for scopes from maskinporten token
         /// </summary>
         public const string CLAIM_SCOPE = "scope";
