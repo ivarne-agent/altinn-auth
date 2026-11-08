@@ -65,8 +65,8 @@ namespace Altinn.Platform.Authentication.Services
                 }
                 else
                 {
-                    List<X509Certificate2> certificates = await GetAllCertificateVersions(
-                        _keyVaultSettings.SecretUri, _certificateSettings.CertificateName);
+                    List<X509Certificate2> certificates = await KeyVaultCertificateVersions.GetAll(
+                        _keyVaultSettings, _certificateSettings.CertificateName);
                     _certificates.AddRange(certificates);
                 }
 
@@ -80,45 +80,6 @@ namespace Altinn.Platform.Authentication.Services
             {
                 _semaphore.Release();
             }
-        }
-
-        private async Task<List<X509Certificate2>> GetAllCertificateVersions(string keyVaultUrl, string certificateName)
-        {
-            List<X509Certificate2> certificates = new List<X509Certificate2>();
-
-            KeyVaultClient client = KeyVaultSettings.GetClient(_keyVaultSettings.ClientId, _keyVaultSettings.ClientSecret);
-
-            // Get the first page of certificates
-            IPage<CertificateItem> certificateItemsPage = await client.GetCertificateVersionsAsync(keyVaultUrl, certificateName);
-            while (true)
-            {
-                foreach (var certificateItem in certificateItemsPage)
-                {
-                    // Ignore disabled or expired certificates
-                    if (certificateItem.Attributes.Enabled == true &&
-                        (certificateItem.Attributes.Expires == null ||
-                         certificateItem.Attributes.Expires > DateTime.UtcNow))
-                    {
-                        CertificateBundle certificateVersionBundle =
-                            await client.GetCertificateAsync(certificateItem.Identifier.Identifier);
-                        SecretBundle certificatePrivateKeySecretBundle =
-                            await client.GetSecretAsync(certificateVersionBundle.SecretIdentifier.Identifier);
-                        byte[] privateKeyBytes = Convert.FromBase64String(certificatePrivateKeySecretBundle.Value);
-                        X509Certificate2 certificateWithPrivateKey = new X509Certificate2(privateKeyBytes);
-
-                        certificates.Add(certificateWithPrivateKey);
-                    }
-                }
-
-                if (certificateItemsPage.NextPageLink == null)
-                {
-                    break;
-                }
-
-                certificateItemsPage = await client.GetCertificateVersionsNextAsync(certificateItemsPage.NextPageLink);
-            }
-
-            return certificates;
         }
     }
 }

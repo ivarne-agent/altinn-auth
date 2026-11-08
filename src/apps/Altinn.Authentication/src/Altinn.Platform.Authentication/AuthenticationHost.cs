@@ -89,6 +89,7 @@ internal static class AuthenticationHost
         services.Configure<AccessManagementSettings>(config.GetSection("AccessManagementSettings"));
         services.Configure<Altinn.Platform.Authentication.Model.KeyVaultSettings>(config.GetSection("kvSetting"));
         services.Configure<CertificateSettings>(config.GetSection("CertificateSettings"));
+        services.Configure<AppTokenSettings>(config.GetSection("AppTokenSettings"));
         services.Configure<SelfIdentifiedLinkTokenSettings>(config.GetSection("SelfIdentifiedLinkTokenSettings"));
         services.Configure<SelfIdentifiedLinkSettings>(config.GetSection("SelfIdentifiedLinkSettings"));
         services.Configure<QueueStorageSettings>(config.GetSection("QueueStorageSettings"));
@@ -217,6 +218,8 @@ internal static class AuthenticationHost
         services.AddSingleton<IUpstreamTokenValidator, UpstreamTokenValidator>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddSingleton<ITokenIssuer, TokenIssuerService>();
+        services.AddSingleton<IAppTokenSigningCertificateProvider, AppTokenSigningCertificateProvider>();
+        services.AddSingleton<IAppTokenIssuer, AppTokenIssuer>();
         services.AddSingleton<ISelfIdentifiedLinkTokenCertificateProvider, SelfIdentifiedLinkTokenCertificateProvider>();
         services.AddSingleton<ISelfIdentifiedLinkTokenService, SelfIdentifiedLinkTokenService>();
         services.AddScoped<ISelfIdentifiedLinkService, SelfIdentifiedLinkService>();
