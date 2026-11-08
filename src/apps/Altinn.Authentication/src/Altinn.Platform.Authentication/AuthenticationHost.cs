@@ -220,6 +220,8 @@ internal static class AuthenticationHost
         services.AddSingleton<ITokenIssuer, TokenIssuerService>();
         services.AddSingleton<IAppTokenSigningCertificateProvider, AppTokenSigningCertificateProvider>();
         services.AddSingleton<IAppTokenIssuer, AppTokenIssuer>();
+        services.AddScoped<IWorkloadAssertionValidator, WorkloadAssertionValidator>();
+        services.AddScoped<IAppTokenService, AppTokenService>();
         services.AddSingleton<ISelfIdentifiedLinkTokenCertificateProvider, SelfIdentifiedLinkTokenCertificateProvider>();
         services.AddSingleton<ISelfIdentifiedLinkTokenService, SelfIdentifiedLinkTokenService>();
         services.AddScoped<ISelfIdentifiedLinkService, SelfIdentifiedLinkService>();

@@ -15,6 +15,9 @@ namespace Altinn.Platform.Authentication.Core.Models.Oidc
 
         [FromForm(Name = "scope")] public string? Scope { get; init; }
 
+        // RFC 7523 jwt-bearer grant: the service account token exchanged for an app token (ADR-0005)
+        [FromForm(Name = "assertion")] public string? Assertion { get; init; }
+
         // private_key_jwt support (when you add it)
         [FromForm(Name = "client_assertion_type")] public string? ClientAssertionType { get; init; }
         [FromForm(Name = "client_assertion")] public string? ClientAssertion { get; init; }

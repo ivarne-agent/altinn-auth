@@ -4,10 +4,12 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Altinn.Platform.Authentication.Configuration;
 using Altinn.Platform.Authentication.Core.Models.Oidc;
 using Altinn.Platform.Authentication.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement;
 
 namespace Altinn.Platform.Authentication.Controllers
 {
@@ -16,9 +18,11 @@ namespace Altinn.Platform.Authentication.Controllers
     /// </summary>
     [ApiController]
     [Route("authentication/api/v1")]
-    public sealed class OidcTokenController(ITokenService tokenService) : ControllerBase
+    public sealed class OidcTokenController(ITokenService tokenService, IAppTokenService appTokenService, IFeatureManager featureManager) : ControllerBase
     {
         private readonly ITokenService _tokenService = tokenService;
+        private readonly IAppTokenService _appTokenService = appTokenService;
+        private readonly IFeatureManager _featureManager = featureManager;
 
         /// <summary>
         /// Creates access/ID tokens via authorization code exchange,
@@ -86,6 +90,18 @@ namespace Altinn.Platform.Authentication.Controllers
                         };
 
                         TokenResult result = await _tokenService.RefreshAsync(req, cancellationToken);
+                        return ToHttpResult(result);
+                    }
+
+                case IAppTokenService.JwtBearerGrantType when await _featureManager.IsEnabledAsync(FeatureFlags.AppTokens):
+                    {
+                        // The service account token is the client's authentication (ADR-0005), so no other is accepted.
+                        if (clientAuth.Type != TokenClientAuthType.Missing)
+                        {
+                            return OAuthError("invalid_request", "Client authentication is not used with this grant.");
+                        }
+
+                        TokenResult result = await _appTokenService.ExchangeAsync(form.Assertion ?? string.Empty, cancellationToken);
                         return ToHttpResult(result);
                     }
 
